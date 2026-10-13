@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - ShopEase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="minimal-style.css">
+    <style>
+        /* Header Styles */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #1f2937;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --light: #f9fafb;
+            --lighter: #f3f4f6;
+            --border: #e5e7eb;
+            --danger: #ef4444;
+            --success: #10b981;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .header {
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0.75rem 0;
+        }
+        
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .logo-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            gap: 0.5rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+            margin: 0 2rem;
+        }
+        
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .nav-link i {
+            font-size: 1.1em;
+            color: var(--primary);
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        .logo-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+        
+        .logo-text {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Form Styles */
+        .add-product-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .add-product-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .product-form {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn i {
+            font-size: 1em;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload-btn {
+            width: 100%;
+            padding: 2rem;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: var(--lighter);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-btn:hover {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .add-product-container {
+                padding: 0 1rem;
+            }
+            
+            .product-form {
+                padding: 1.5rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <!-- Logo -->
+            <a href="index.html" class="logo-link">
+                <span class="logo-icon">🛍️</span>
+                <span class="logo-text">ShopEase</span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="shop.html" class="nav-link">
+                    <i class="fas fa-store"></i>
+                    <span>Shop</span>
+                </a>
+                <a href="index.html#about" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="index.html#contact" class="nav-link">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact</span>
+                </a>
+            </nav>
+            
+            <!-- Header Actions -->
+            <!-- <div class="header-actions">
+                
+                <a href="cart.html" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount" class="cart-count">0</span>
+                </a>
+            </div> -->
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Add Product Form -->
+    <div class="add-product-container">
+        <h1 class="add-product-title">Add New Product</h1>
+        
+        <form class="product-form" id="addProductForm">
+            <div class="form-group">
+                <label for="productName" class="form-label">Product Name</label>
+                <input type="text" id="productName" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="productPrice" class="form-label">Price ($)</label>
+                <input type="number" id="productPrice" class="form-control" min="0" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="productCategory" class="form-label">Category</label>
+                <select id="productCategory" class="form-control" required>
+                    <option value="">Select a category</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="home">Home & Garden</option>
+                    <option value="beauty">Beauty</option>
+                    <option value="sports">Sports & Outdoors</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Product Images</label>
+                <div class="file-upload">
+                    <div class="file-upload-btn">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                        <div>Click to upload images or drag and drop</div>
+                        <div class="file-name" id="fileName">No file chosen</div>
+                    </div>
+                    <input type="file" id="productImages" accept="image/*" multiple>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="productDescription" class="form-label">Description</label>
+                <textarea id="productDescription" class="form-control" rows="4" required></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <a href="shop.html" class="btn btn-outline">
+                    <i class="fas fa-times"></i>
+                    <span>Cancel</span>
+                </a>
+                <button onclick="addProduct()" type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i>
+                    <span  id="addProduct">Add Product</span>
+                </button>
+            </div>
+        </form>
+    </div>
+    <script src="main.js"></script>
+    <!-- <script>
+        // Simple file name display
+        document.getElementById('productImages').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const fileNameElement = document.getElementById('fileName');
+            
+            if (files.length > 0) {
+                if (files.length === 1) {
+                    fileNameElement.textContent = files[0].name;
+                } else {
+                    fileNameElement.textContent = `${files.length} files selected`;
+                }
+            } else {
+                fileNameElement.textContent = 'No file chosen';
+            }
+        });
+        
+        // Form submission (would be handled by a backend in a real application)
+        document.getElementById('addProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Product added successfully!');
+            this.reset();
+            document.getElementById('fileName').textContent = 'No file chosen';
+        });
+    </script> -->
+</body>
+</html>

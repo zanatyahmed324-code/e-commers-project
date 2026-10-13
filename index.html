@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEase - Your Ultimate Shopping Destination</title>
+    <link rel="stylesheet" href="minimal-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="shop.css">
+    <style>
+        /* Style for name and subject inputs */
+        #name,
+        #subject {
+            border-radius: 0;
+        }
+        
+        #name:focus,
+        #subject:focus,
+        #message:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        
+        /* Remove the animated focus border for message textarea */
+        #message:focus ~ .focus-border {
+            width: 0 !important;
+            transition: none !important;
+        }
+        
+        /* Header Styles */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #1f2937;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --light: #f9fafb;
+            --lighter: #f3f4f6;
+            --border: #e5e7eb;
+            --danger: #ef4444;
+            --success: #10b981;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .header {
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0.75rem 0;
+        }
+        
+        .header.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Animation Keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Form Input Styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-col {
+            flex: 1;
+            position: relative;
+        }
+        
+        .contact-form input:not([type="submit"]),
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 1rem;
+            color: var(--text);
+            border: none;
+            border-bottom: 2px solid var(--border);
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-form input:not([type="submit"]):focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-bottom-color: var(--primary);
+        }
+        
+        .contact-form label {
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .contact-form input:not([type="submit"]):focus ~ label,
+        .contact-form input:not([type="submit"]):valid ~ label,
+        .contact-form textarea:focus ~ label,
+        .contact-form textarea:valid ~ label {
+            top: -15px;
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+        
+        .contact-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .contact-form .btn {
+            margin-top: 4rem;
+        }
+        
+        /* Apply animation to hero section */
+        .hero {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0; /* Start invisible */
+        }
+        
+        /* Apply staggered animations to content sections */
+        .featured-products, .categories, #contact {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            animation-delay: 0.3s;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        
+        .categories {
+            animation-delay: 0.5s;
+        }
+        
+        #contact {
+            animation-delay: 0.7s;
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+            backface-visibility: hidden;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        #contact * {
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+        }
+        
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .logo-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            gap: 0.5rem;
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+        
+        .logo-text {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Navigation */
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+            margin: 0 2rem;
+        }
+        
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .nav-link i {
+            font-size: 1.1em;
+            color: var(--primary);
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        /* Removed the dot indicator under active links */
+        
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        
+
+        
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 22px;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 0.5rem;
+            background: none;
+            border: none;
+        }
+        
+        .mobile-menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: var(--text);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .nav-links {
+                gap: 0.75rem;
+            }
+            
+            .nav-link span {
+                display: none;
+            }
+            
+            .nav-link i {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-inner {
+                padding: 0.5rem 1.5rem;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+                margin: 0;
+                gap: 0.5rem;
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+            }
+            
+            .nav-link {
+                width: 100%;
+                padding: 1rem;
+                justify-content: flex-start;
+                border-radius: 8px;
+            }
+            
+            .nav-link span {
+                display: inline;
+            }
+            
+            .nav-link i {
+                width: 24px;
+                text-align: center;
+            }
+            
+            .mobile-menu-toggle {
+                display: flex;
+            }
+            
+            .auth-buttons {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none;
+            }
+            
+            .header-actions .btn span {
+                display: none;
+            }
+            
+            .header-actions .btn i {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <!-- Logo -->
+            <a href="index.html" class="logo-link">
+                <span class="logo-icon">🛍️</span>
+                <span class="logo-text">ShopEase</span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="shop.html" class="nav-link">
+                    <i class="fas fa-store"></i>
+                    <span>Shop</span>
+                </a>
+                <a href="#about" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="#contact" class="nav-link">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact</span>
+                </a>
+            </nav>
+            
+            <!-- Header Actions - No cart icon on home page -->
+            <div class="header-actions">
+                <!-- No cart icon here as per user request -->
+            </div>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Welcome to ShopEase</h1>
+                <p>Your one-stop destination for all your shopping needs. Discover amazing products at unbeatable prices.</p>
+                
+                <div class="cta-buttons">
+                    <a href="shop.html" class="btn btn-primary">Shop Now</a>
+                </div>
+            </div>
+            
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Why Choose Us</h2>
+            <div class="feature-grid">
+            </div>
+                <!-- <div class="feature-card">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h3>Fast Delivery</h3>
+                    <p>Get your products delivered to your doorstep in no time.</p>
+                </div> -->
+                <!-- <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure Payments</h3>
+                    <p>100% secure payment options for all your transactions.</p>
+                </div> -->
+                <!-- <div class="feature-card">
+                    <i class="fas fa-headset"></i>
+                    <h3>24/7 Support</h3>
+                    <p>Our support team is always here to help you.</p>
+                </div> -->
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <h2>About ShopEase</h2>
+                <p>ShopEase is a leading e-commerce platform that connects buyers and sellers from around the world. Our mission is to provide a seamless shopping experience with top-quality products and exceptional customer service.</p>
+                <p>Join our growing community of satisfied customers and sellers today!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Get In Touch</h2>
+            <p class="section-subtitle">Have questions or feedback? We'd love to hear from you!</p>
+            
+            <div class="contact-container">
+                <!-- Contact Info -->
+                <div class="contact-info-wrapper">
+                    <div class="contact-info-card">
+                        <div class="contact-method">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="contact-details">
+                                <h3>Our Location</h3>
+                                <p>123 ShopEase Street<br>New York, NY 10001</p>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fas fa-envelope"></i>
+                            <div class="contact-details">
+                                <h3>Email Us</h3>
+                                <p><a href="mailto:info@shopease.com">info@shopease.com</a><br><a href="mailto:support@shopease.com">support@shopease.com</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fas fa-phone-alt"></i>
+                            <div class="contact-details">
+                                <h3>Call Us</h3>
+                                <p><a href="tel:+1234567890">+1 (234) 567-890</a><br>Mon - Fri, 9:00 AM - 6:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://twitter.com/" class="social-link" aria-label="Twitter" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+                            <a href="https://www.instagram.com/" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.linkedin.com/" class="social-link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="contact-form-wrapper">
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <input type="text" id="name" name="name" required>
+                                    <label for="name">Your Name</label>
+                                    <span class="focus-border"></span>
+                                </div>
+                                <div class="form-col">
+                                    <input type="email" id="email" name="email" required>
+                                    <label for="email">Your Email</label>
+                                    <span class="focus-border"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="subject" name="subject" required>
+                            <label for="subject">Subject</label>
+                            <span style="border: none;" class="focus-border"></span>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                            <label for="message">Your Message</label>
+                            <span style="border: none;" class="focus-border"></span>
+                        </div>
+                        <button  class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Include Footer -->
+    <div id="footer"></div>
+
+    <!-- Load JavaScript -->
+    <script>
+        // Mobile menu toggle and header functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    menuToggle.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                });
+            }
+            
+            // Close menu when clicking on a link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        menuToggle.classList.remove('active');
+                        navLinks.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Update active link based on current page
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // Header remains visible at all times
+            const header = document.querySelector('.header');
+            header.style.transform = 'translateY(0)';
+            header.classList.add('scrolled');
+            
+            // Load footer
+            fetch('components/footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer').innerHTML = data;
+                });
+            
+            // Initialize features
+            const features = [
+                {
+                    icon: 'fa-shipping-fast',
+                    title: 'Fast Delivery',
+                    description: 'Get your products delivered to your doorstep in no time.'
+                },
+                {
+                    icon: 'fa-shield-alt',
+                    title: 'Secure Payments',
+                    description: '100% secure payment options for all your transactions.'
+                },
+                {
+                    icon: 'fa-headset',
+                    title: '24/7 Support',
+                    description: 'Our support team is always here to help you.'
+                }
+            ];
+            
+            // Render features
+            const featureGrid = document.querySelector('.feature-grid');
+            if (featureGrid) {
+                features.forEach(feature => {
+                    const featureCard = document.createElement('div');
+                    featureCard.className = 'feature-card';
+                    featureCard.innerHTML = `
+                        <i class="fas ${feature.icon}"></i>
+                        <h3>${feature.title}</h3>
+                        <p>${feature.description}</p>
+                    `;
+                    featureGrid.appendChild(featureCard);
+                });
+            }
+            
+            // Call updateAuthUI if it exists
+            if (typeof updateAuthUI === 'function') {
+                updateAuthUI();
+            }
+        });
+    </script>
+</body>
+</html>
